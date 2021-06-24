@@ -44,6 +44,7 @@ def LCplot(Ydates, pfluxes, noises,mod_date,region,k,wl='850',mag=0,option='',fi
     
 
 def JDUTPlot(ax, MJD=1, fs=13,nolabel=0,spacing="      ",noedge=[0,0]):
+    # Overplot the UT notation over the JD lightcurve plot
     import matplotlib.pyplot as plt
     import numpy as np
     

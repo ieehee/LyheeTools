@@ -112,6 +112,7 @@ def LCSEDflux(dates,fluxes,errors,t_dates,wl):
 
 
 def LCStringlength(dates, fluxes, noises, periods,wl = '850', Phaseplot=0,progress=0):
+    # StringLength anlaysis
     import numpy as np
     import matplotlib.pyplot as plt
 
@@ -182,9 +183,9 @@ from astropy.timeseries import LombScargle as LS
 import numpy as np
 
 class LCLombscargle():
-    
+    # Calculate Lomb-Scargle Periodogram based on astropy.timeseries.LombScargle
+    #
     def __init__(self,dates,pfluxes,noises,peak=0,window=0):
-
         self.dates = dates
         self.pfluxes = pfluxes
         self.noises = noises
@@ -211,8 +212,6 @@ class LCLombscargle():
             self.detected_freq = detected_freq_new
             print("Current Set Peak : " + str(1/self.detected_freq) +" days")
         self.FAP_peak = self.ls_pf.false_alarm_probability(self.powers[np.where(self.freqs == self.detected_freq)])
-
-    
         
     def Periodogram(self):
         #if nterms == 1:
@@ -222,7 +221,9 @@ class LCLombscargle():
         return(self.freqs, self.powers)
     
     def mulsin(self,x, *sinpar_in_ori):
+        # Reconstruct the sine function (capable of multi-sinusoidal function)
         # input must be [offset, freq1, amp1, iniphase1 (, freq2, amp2, iniphase2, .....)]
+        # can use the output of modelpara as input directly
         y = np.array([0.0 for t in x])
         if len(sinpar_in_ori) == 1:
             sinpar_in = sinpar_in_ori[0]
@@ -248,10 +249,13 @@ class LCLombscargle():
         
 
     def modelpara(self):
-        
+        # Convert the model parameters to user-friendly format
+        # Return: [offset,Freqeuncy, amp, ini_phase]]
         model_raw_para = self.ls_pf.model_parameters(self.detected_freq)
         #print(model_raw_para)
         amp = np.sqrt(model_raw_para[1]**2 + model_raw_para[2]**2)
+        
+        # %%%%%% Please fix the ini_phase in clear form before using it in any analysis
         ini_phase = np.arctan(model_raw_para[2]/model_raw_para[1])
         #print(ini_phase)
         if model_raw_para[2] > 0 and model_raw_para[1] < 0:
@@ -265,7 +269,6 @@ class LCLombscargle():
         ini_phase= -ini_phase
         output_para = [model_raw_para[0]+np.mean(self.pfluxes),self.detected_freq,amp,ini_phase]
         sinpar = output_para
-        #output : [offset,Freqeuncy, amp, ini_phase]
         return(sinpar)
     
 #    def residue(self):
@@ -280,6 +283,7 @@ class LCLombscargle():
         return(freqs,powers)
         
     def sinfit(self,inipar_in,bounds=0):
+        # Sinusoidal fitting of the lightcurve
         import scipy.optimize as op
         #output = []
 
@@ -335,6 +339,9 @@ def LCSampling(r_dates, r_fluxes, r_noises, rate=0.8):
     return(dates, fluxes, noises)
     
 def LCLinearfit(dates, fluxes, noises, xnoises=[0],plot=0,mod_date='',region='',k='',nonoise=0):
+    # Perform linear fitting
+    # Basically using scipy.optimize.curve_fit
+    # Capable of orthogonal distance regression using "odr" function
     import matplotlib.pyplot as plt
     import numpy as np
     import scipy.optimize as op
@@ -379,6 +386,7 @@ def LCLinearfit(dates, fluxes, noises, xnoises=[0],plot=0,mod_date='',region='',
     return(sol_para, sol_err)
 
 def Gaussfit(x, y, yn=0):
+    #Gaussian fitting with curve_fit
     import matplotlib.pyplot as plt
     import numpy as np
     import scipy.optimize as op

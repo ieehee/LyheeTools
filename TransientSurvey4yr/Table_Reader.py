@@ -1,9 +1,11 @@
 import numpy as np
 import LCAnalyses as LCA
+
 class ReadTable:
-    
     def __init__(self,inputfile,raw=0,datecut=0,recal=0):
-    
+        # Call the lightcurve of the sources in a region
+        # input: path to the source_info table.
+        # Requires the metadata file matches to the source_info table, in the same directory
         self.inputfile = inputfile
         self.a = np.loadtxt(self.inputfile,dtype='str')
         self.metafile = inputfile.split('_')[0] + '_meta.dat'
@@ -29,6 +31,7 @@ class ReadTable:
         self.deviations = [np.float64(x[14+len(self.b):]) for x in self.a]
         #print(len(self.deviations[0]))
         
+        # Below _if_ blocks are to exclude the problematic epochs in NGC1333 and OMC23
         if inputfile.split("_")[0].split("/")[-1] == "NGC1333" and not raw:
             #print('Occured!')
             for index in [2,15,18]: # 3, 17, 21th
@@ -44,7 +47,6 @@ class ReadTable:
             self.sd_pfluxes = [np.std(x) for x in self.pfluxes]
             self.sd_fids = np.sqrt(0.014**2 + (0.02*self.mean_pfluxes)**2)
             
-            
         elif inputfile.split("_")[0].split("/")[-1] == "OMC23" and not raw:
             #print("Occured!")
             index = 18
@@ -56,13 +58,15 @@ class ReadTable:
             self.mean_pfluxes = np.array([np.mean(x) for x in self.pfluxes])
             self.sd_pfluxes = [np.std(x) for x in self.pfluxes]
             self.sd_fids = np.sqrt(0.014**2 + (0.02*self.mean_pfluxes)**2)
-        
+            
+        # For testing the recalibrated (Steve & Colton et al. in prep) data.
         if recal:
             self.recal_factor = [np.float64(x[-1]) for x in self.b]
             for i in range(0,len(self.pfluxes)):
                 for j in range(0,len(self.pfluxes[0])):
                     self.pfluxes[i][j] = self.pfluxes[i][j]*self.recal_factor[j]
         
+        # Limit the date for the data
         if datecut and datecut < np.max(self.JDs):
             print(datecut)
             if datecut < np.min(self.JDs):
@@ -88,15 +92,17 @@ class ReadTable:
             self.sd_pfluxes = [np.std(x) for x in self.pfluxes]
             self.sd_fids = np.sqrt(0.014**2 + (0.02*self.mean_pfluxes)**2)
             
-
-        
+    
     def FindIndex(self, ID=0, Index =0):
+        # Input ID -> return index
+        # Input index -> return ID
         if Index:
             return(self.Indices.index(Index))
         if ID:
             return(self.IDs.index(ID))
     
     def Identifier(self, ID=0, Index =0):
+        # Check whether a source has other known name
         if not ID:
             for i in range(0, len(self.pfluxes)):
                 if self.IDs[i]=='JCMTPP_J034356.5+320050':
@@ -136,7 +142,7 @@ class ReadTable:
                 if self.IDs[i] =='JCMTPP_J183004.0-020306':
                     self.IDs[i] = "CARMA 7"
                 if self.IDs[i] =='JCMTPP_J182937.8-015103':
-                    self.IDs[i] = "IRAS 18720-0153"
+                    self.IDs[i] = "IRAS 18270-0153"
                 if self.IDs[i] =='JCMTPP_J053527.4-050929':
                     self.IDs[i] = "HOPS 370"
                 if self.IDs[i] =='JCMTPP_J053522.4-050111':
@@ -182,7 +188,7 @@ def Identifier(ID):
     if ID =='JCMTPP_J183004.0-020306':
         ID = "CARMA 7"
     if ID =='JCMTPP_J182937.8-015103':
-        ID = "IRAS 18720-0153"
+        ID = "IRAS 18270-0153"
     return(ID)
 
         
@@ -232,7 +238,7 @@ class Call_Brights:
         
 
 class All_Table:
-    
+    # Read the table generated after running the main cell of "All_table_plotter.ipynb"
     def __init__(self,inputfile,hexcoord=0):
         self.inputfile = inputfile
         self.a = np.loadtxt(self.inputfile, dtype='str')
@@ -275,11 +281,15 @@ class All_Table:
         #self.SD_MU = [float(x[29]) for x in self.a]
         
     def AddSpitzer(self):
+        # Add Spitzer source data
+        # Input: Spitzer source matched table
         self.Tbol = [np.float32(x[56]) for x in self.a]
         self.Lbol = [np.float32(x[57]) for x in self.a]
         #self.Type = [np.float
         
     def AddHOPS(self):
+        # Add Herchel Orion Protostars source data
+        # Input: HOPS source matched table
         self.Tbol = [float(x[34]) for x in self.a]
         self.Lbol = [float(x[33]) for x in self.a]
 
@@ -296,6 +306,7 @@ class HOPStab:
 
         
 def Cutto80(data,mean=1,test=0):
+    # Cut the top 10 and bottom 10% from the data
     import numpy as np
     num = len(data)
     num10 = int(np.round(num/10))
