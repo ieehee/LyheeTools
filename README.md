@@ -61,7 +61,8 @@ A few rough solutions for astronomical data handling problems I met
 	- Cuts the lightcurve following the given dates
 	- **Return**: cut dates, cut fluxes, cut flux errors
 
+### Modules
 
-*JDUTPlot.py*: Overplots UT year on top of the brightness-JD lightcurve, with the year separation grid.
+***JDUTPlot.py***: Overplots UT year on top of the brightness-JD lightcurve, with the year separation grid.
 
-*FITS2ASCII.py*: Make FITS format image data to ASCII data with three columns (RA[Deg], Dec[Deg], and Flux).
+***FITS2ASCII.py***: Make FITS format image data to ASCII data with three columns (RA[Deg], Dec[Deg], and Flux).
