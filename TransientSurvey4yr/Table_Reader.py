@@ -7,28 +7,28 @@ class ReadTable:
         # input: path to the source_info table.
         # Requires the metadata file matches to the source_info table, in the same directory
         self.inputfile = inputfile
-        self.a = np.loadtxt(self.inputfile,dtype='str')
+        self.source_info = np.loadtxt(self.inputfile,dtype='str')
         self.metafile = inputfile.split('_')[0] + '_meta.dat'
-        self.b = np.loadtxt(self.metafile, dtype='str')
-        self.Indices = [int(x[0]) for x in self.a]
-        self.UTs = [x[2] for x in self.b]
-        self.JDs = [float(x[4]) for x in self.b]
+        self.metadata = np.loadtxt(self.metafile, dtype='str')
+        self.Indices = [int(x[0]) for x in self.source_info]
+        self.UTs = [x[2] for x in self.metadata]
+        self.JDs = [float(x[4]) for x in self.metadata]
         if recal:
-            self.JDs = [float(x[3]) for x in self.b]
-        self.IDs = [x[1] for x in self.a]
-        self.RAs = [np.float64(x[2]) for x in self.a]
-        self.DECs = [np.float64(x[3]) for x in self.a]
-        self.proto_dists = [np.float16(x[4]) for x in self.a]
-        self.disk_dists = [np.float16(x[5]) for x in self.a]
-        self.mean_pfluxes= [np.float64(x[6]) for x in self.a]
-        self.sd_map = [np.float64(x[7]) for x in self.b]
+            self.JDs = [float(x[3]) for x in self.metadata]
+        self.IDs = [x[1] for x in self.source_info]
+        self.RAs = [np.float64(x[2]) for x in self.source_info]
+        self.DECs = [np.float64(x[3]) for x in self.source_info]
+        self.proto_dists = [np.float16(x[4]) for x in self.source_info]
+        self.disk_dists = [np.float16(x[5]) for x in self.source_info]
+        self.mean_pfluxes= [np.float64(x[6]) for x in self.source_info]
+        self.sd_map = [np.float64(x[7]) for x in self.metadata]
         #self.sd_map = [x[8] for x in self.b]
-        self.sd_pfluxes = [np.float64(x[7]) for x in self.a]
-        self.sd_fids = [np.float64(x[8]) for x in self.a]
+        self.sd_pfluxes = [np.float64(x[7]) for x in self.source_info]
+        self.sd_fids = [np.float64(x[8]) for x in self.source_info]
         #self.slopes = [np.float64(x[10]) for x in self.a]
         #self.dslopes = [np.float64(x[11]) for x in self.a]
-        self.pfluxes = [np.float64(x[15:15+len(self.b)]) for x in self.a]
-        self.deviations = [np.float64(x[14+len(self.b):]) for x in self.a]
+        self.pfluxes = [np.float64(x[15:15+len(self.metadata)]) for x in self.source_info]
+        self.deviations = [np.float64(x[14+len(self.metadata):]) for x in self.source_info]
         #print(len(self.deviations[0]))
         
         # Below _if_ blocks are to exclude the problematic epochs in NGC1333 and OMC23
@@ -60,11 +60,11 @@ class ReadTable:
             self.sd_fids = np.sqrt(0.014**2 + (0.02*self.mean_pfluxes)**2)
             
         # For testing the recalibrated (Steve & Colton et al. in prep) data.
-        if recal:
-            self.recal_factor = [np.float64(x[-1]) for x in self.b]
-            for i in range(0,len(self.pfluxes)):
-                for j in range(0,len(self.pfluxes[0])):
-                    self.pfluxes[i][j] = self.pfluxes[i][j]*self.recal_factor[j]
+#         if recal:
+#             self.recal_factor = [np.float64(x[-1]) for x in self.b]
+#             for i in range(0,len(self.pfluxes)):
+#                 for j in range(0,len(self.pfluxes[0])):
+#                     self.pfluxes[i][j] = self.pfluxes[i][j]*self.recal_factor[j]
         
         # Limit the date for the data
         if datecut and datecut < np.max(self.JDs):
