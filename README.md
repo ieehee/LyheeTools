@@ -7,7 +7,7 @@ A few rough solutions for astronomical data handling problems I met
 **EC53Paper**: Codes used for the analysis of EC53 using confidential data sets. Published in *The Astrophysical Journal*. Lee Y.-H. et al., 2020, ApJ, 903, 5 (https://ui.adsabs.harvard.edu/abs/2020ApJ...903....5L/abstract)
 
 
-## Selfmade Packages
+## Selfmade Package
 
 ### LCAnalyses
 
