@@ -24,7 +24,7 @@ def Get_fitinfo(filename, path="./"):
     return(data, RAs, Decs)
 
 
-def Fit2ASCII(RAs, Decs, data, filename="./OUTPUT.ascii"):
+def FITS2ASCII(RAs, Decs, data, filename="./OUTPUT.ascii"):
     with open(filename, 'w') as w:
         w.write("#RA Dec Flux")
         for i, RA in enumerate(RAs):
@@ -43,4 +43,4 @@ fitlist = [x for x in ls_dir if x.find(".fit")+1] # +1 because find method retur
 
 for file in fitlist:
     data, RAs, Decs = Get_fitinfo(file)
-    Fit2ASCII(RAs, Decs, data, filename=file[:-4]+".ascii")
+    FITS2ASCII(RAs, Decs, data, filename=file[:-4]+".ascii")
