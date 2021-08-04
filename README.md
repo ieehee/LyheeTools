@@ -7,4 +7,4 @@ A few rough solutions for astronomical data handling problems I met
 
 *JDUTPlot.py*: Overplots UT year on top of the brightness-JD lightcurve, with the year separation grid.
 
-*FIT2ASCII.py*: Make FIT format image data to ASCII data with three columns (RA[Deg], Dec[Deg], and Flux).
+*FITS2ASCII.py*: Make FITS format image data to ASCII data with three columns (RA[Deg], Dec[Deg], and Flux).
